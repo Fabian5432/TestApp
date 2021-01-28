@@ -4,6 +4,7 @@ using AutoFixture.Idioms;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,9 +56,9 @@ namespace Tests.ViewModels
         public async Task ShouldGetAllRates()
         {
             // Arrange 
-            var random_rates = _fixture.CreateMany<RatesModel>(1);
+            var randomRates = _fixture.CreateMany<RatesModel>(10);
             _openExchangeRatesServiceMock.Setup(x => x.GetAllRates())
-                                         .ReturnsAsync(random_rates.ToList());
+                                         .ReturnsAsync(randomRates.ToList());
             _fixture.Inject(_openExchangeRatesServiceMock);
 
             var SUT = _fixture.Create<RatesViewModel>();
@@ -67,15 +68,17 @@ namespace Tests.ViewModels
 
             // Assert 
             SUT.RatesItems.Should().NotBeEmpty();
+            SUT.RatesItems.Should().HaveCount(10);
         }
 
         [Test]
         public async Task ShouldGetAllQuates()
         {
             // Arrange 
-            var random_quotes = _fixture.CreateMany<QuotesModel>(1);
+            var randomQuotes = _fixture.CreateMany<QuotesModel>(10);
             _currencyLayerServiceMock.Setup(x => x.GetAllQuotes())
-                                     .ReturnsAsync(random_quotes.ToList());
+                                     .ReturnsAsync(randomQuotes.ToList());
+
             _fixture.Inject(_currencyLayerServiceMock);
 
             var SUT = _fixture.Create<RatesViewModel>();
@@ -85,66 +88,87 @@ namespace Tests.ViewModels
 
             // Assert 
             SUT.QuotesItems.Should().NotBeEmpty();
+            SUT.QuotesItems.Should().HaveCount(10);
         }
 
         [TestCase("AED", 0.5)]
         [TestCase("USD", 1)]
         [TestCase("AFN", 0.1)]
         [TestCase("ALN", 0.2)]
-        public async Task ShouldGetCurrentQuotes(string expected_currency, double quoteValue)
+        public async Task ShouldGetCurrentQuotesAndRatesValueForGivenCurrency(string expectedCurrency, double expectedCurrencyValue)
         {
             // Arrange 
-            var random_quotes = _fixture.CreateMany<QuotesModel>(3);
-            var expected_quotes = new List<QuotesModel>(random_quotes);
+            var randomQuotes = _fixture.CreateMany<QuotesModel>(3);
+            var randomRates = _fixture.CreateMany<RatesModel>(3);
+            var expectedQuotes = new List<QuotesModel>(randomQuotes);
+            var expectedRates = new List<RatesModel>(randomRates);
 
-            var quate = new QuotesModel(expected_currency, quoteValue);
-
-            _currencyLayerServiceMock.Setup(x => x.GetAllQuotes())
-                                     .ReturnsAsync(expected_quotes);
-
-            _fixture.Inject(_currencyLayerServiceMock);
-
-            expected_quotes.Add(quate);
-
-            var SUT = _fixture.Create<RatesViewModel>();
-
-            // Act 
-            var data = await SUT.GetCurrentQuoteFor(expected_currency);
-
-            // Assert 
-            data.Should().NotBeNull();
-            data.QuoteName.Should().Be(expected_currency);
-            _currencyLayerServiceMock.Verify(x => x.GetAllQuotes(), Times.Once);
-        }
-
-        [TestCase("AED", 0.5)]
-        [TestCase("USD", 1)]
-        [TestCase("AFN", 0.1)]
-        [TestCase("ALN", 0.2)]
-        public async Task ShouldGetCurrentRates(string expected_currency, double rateValue)
-        {
-            // Arrange 
-            var random_rates = _fixture.CreateMany<RatesModel>(3);
-            var expected_rates = new List<RatesModel>(random_rates);
-
-            var rate = new RatesModel(expected_currency, 1.5);
+            var rate = new RatesModel(expectedCurrency, expectedCurrencyValue);
+            var quate = new QuotesModel(expectedCurrency, expectedCurrencyValue);
 
             _openExchangeRatesServiceMock.Setup(x => x.GetAllRates())
-                                         .ReturnsAsync(expected_rates);
+                                         .ReturnsAsync(expectedRates);
+            _currencyLayerServiceMock.Setup(x => x.GetAllQuotes())
+                                     .ReturnsAsync(expectedQuotes);
 
             _fixture.Inject(_openExchangeRatesServiceMock);
+            _fixture.Inject(_currencyLayerServiceMock);
 
-            expected_rates.Add(rate);
+            expectedQuotes.Add(quate);
+            expectedRates.Add(rate);
 
             var SUT = _fixture.Create<RatesViewModel>();
 
             // Act 
-            var data = await SUT.GetCurrentRateFor(expected_currency);
+            await SUT.GetCurrentRateFor(expectedCurrency);
 
             // Assert 
-            data.Should().NotBeNull();
-            data.RateName.Should().Be(expected_currency);
+            SUT.OpenExchangeRatesApiRateValue.Should().NotBe(null);
+            SUT.CurrencyLayerServiceApiValue.Should().NotBe(null);
+            SUT.OpenExchangeRatesApiRateValue.Should().Be(expectedCurrencyValue);
+            SUT.CurrencyLayerServiceApiValue.Should().Be(expectedCurrencyValue);
+            _currencyLayerServiceMock.Verify(x => x.GetAllQuotes(), Times.Once);
             _openExchangeRatesServiceMock.Verify(x => x.GetAllRates(), Times.Once);
+        }
+
+        [Test]
+        public void ShouldThrowExceptionWhenNoElemenAreAvailable()
+        {   
+            // Arrange
+            var SUT = _fixture.Create<RatesViewModel>();
+
+            // Assert  / Act 
+            var assert1 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetAllQuotes());
+            assert1.Message.Should().Be("Error loading quotes from curreny layer api");
+
+            var assert2 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetAllRates());
+            assert2.Message.Should().Be("Error loading rates from Open exchange api");
+        }
+
+        [Test]
+        public void ShouldThrowExceptionIfCurrencyNameIsNullOrWhiteSpace()
+        {  
+            // Arrange 
+            var randomQuotes = _fixture.CreateMany<QuotesModel>(3);
+            var randomRates = _fixture.CreateMany<RatesModel>(3);
+            var expectedQuotes = new List<QuotesModel>(randomQuotes);
+            var expectedRates = new List<RatesModel>(randomRates);
+
+            _openExchangeRatesServiceMock.Setup(x => x.GetAllRates())
+                                         .ReturnsAsync(expectedRates);
+            _currencyLayerServiceMock.Setup(x => x.GetAllQuotes())
+                                     .ReturnsAsync(expectedQuotes);
+
+            _fixture.Inject(_openExchangeRatesServiceMock);
+            _fixture.Inject(_currencyLayerServiceMock);
+
+            var SUT = _fixture.Create<RatesViewModel>();
+
+            // Act / Assert
+            var assert1 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetCurrentRateFor(null));
+            assert1.Message.Should().Be("Currency name must be specified");
+            var assert2 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetBestCurrentRateFor(null));
+            assert2.Message.Should().Be("Currency name must be specified");
         }
 
         #endregion

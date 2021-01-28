@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using TestApp.Services.Interfaces;
 using TestApp.Models;
 using TestApp.ViewModels.Base;
-using System.Diagnostics;
 
 namespace TestApp.ViewModels
 {
@@ -15,6 +14,10 @@ namespace TestApp.ViewModels
 
         public List<RatesModel> RatesItems { get; } = new List<RatesModel>();
         public List<QuotesModel> QuotesItems { get; } = new List<QuotesModel>();
+
+        public double OpenExchangeRatesApiRateValue { get; set; } = default;
+        public double CurrencyLayerServiceApiValue { get; set; } = default;
+        public double BestCurrencyValue { get; set; } = default;
 
         #endregion
 
@@ -53,9 +56,8 @@ namespace TestApp.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                throw new Exception("Error loading rates from Open exchange api", ex);
             }
-
         }
 
         public async Task GetAllQuotes()
@@ -71,22 +73,52 @@ namespace TestApp.ViewModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
+                throw new Exception("Error loading quotes from curreny layer api", ex);
             }
         }
 
-        public async Task<RatesModel> GetCurrentRateFor(string currencyName)
-        {   
-            var allRates = await _openExchangeRatesService.GetAllRates();
+        public async Task GetBestCurrentRateFor(string currencyName)
+        {
+            if (string.IsNullOrWhiteSpace(currencyName))
+            {
+                throw new Exception($"Currency name must be specified");
+            }
 
-            return allRates.FirstOrDefault(r => r.RateName.Contains(currencyName));
+            try
+            {
+                var allRates = await _openExchangeRatesService.GetAllRates();
+                var allQuotes = await _currencyLayerService.GetAllQuotes();
+
+                OpenExchangeRatesApiRateValue = allRates.FirstOrDefault(r => r.RateName.Contains(currencyName)).RateValue;
+                CurrencyLayerServiceApiValue = allQuotes.FirstOrDefault(q => q.QuoteName.Contains(currencyName)).QuoteValue;
+
+                BestCurrencyValue = (OpenExchangeRatesApiRateValue > CurrencyLayerServiceApiValue) ? OpenExchangeRatesApiRateValue : CurrencyLayerServiceApiValue;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Error loading the best current value with the given currency name: {currencyName}", ex);
+            }
         }
 
-        public async Task<QuotesModel> GetCurrentQuoteFor(string currencyName)
+        public async Task GetCurrentRateFor(string currencyName)
         {
-             var allQuotes = await _currencyLayerService.GetAllQuotes();
+            if (string.IsNullOrWhiteSpace(currencyName))
+            {
+                throw new Exception($"Currency name must be specified");
+            }
 
-             return allQuotes.FirstOrDefault(q => q.QuoteName.Contains(currencyName));
+            try
+            {   
+                var allRates = await _openExchangeRatesService.GetAllRates();
+                var allQuotes = await _currencyLayerService.GetAllQuotes();
+
+                OpenExchangeRatesApiRateValue = allRates.FirstOrDefault(r => r.RateName.Contains(currencyName)).RateValue;
+                CurrencyLayerServiceApiValue = allQuotes.FirstOrDefault(q => q.QuoteName.Contains(currencyName)).QuoteValue;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception($"Error getting current rate value with the given currency name: {currencyName}", ex);
+            }
         }
 
         #endregion

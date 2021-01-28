@@ -30,21 +30,29 @@ namespace TestApp.Views
 
         public async Task ShowCurrentRateValue(string currency)
         {
-            var openExchangeApiRate = await ViewModel.GetCurrentRateFor(currency);
-            var currencyLayerApiQuote = await ViewModel.GetCurrentQuoteFor(currency);
-
-            Print($"Current rate from USD to {currency} via Open Exchange api: " + openExchangeApiRate.RateValue);
-            Print($"Current rate from USD to {currency} via Currency layer api: " + currencyLayerApiQuote.QuoteValue);
+            try
+            {
+                await ViewModel.GetCurrentRateFor(currency);
+                Print($"Current rate from USD to {currency} via Open Exchange api: " + ViewModel.OpenExchangeRatesApiRateValue + "\n"
+                        + $"Current rate from USD to {currency} via Currency layer api: " + ViewModel.CurrencyLayerServiceApiValue);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public async Task ShowBestCurrentRateValue(string currency)
         {
-            var openExchangeApiRate = await ViewModel.GetCurrentRateFor(currency);
-            var currencyLayerApiQuote = await ViewModel.GetCurrentQuoteFor(currency);
-
-            var bestRateValue = (openExchangeApiRate.RateValue > currencyLayerApiQuote.QuoteValue) ? openExchangeApiRate.RateValue : currencyLayerApiQuote.QuoteValue;
-
-            Print($"Best current rate from USD to {currency}: " + bestRateValue);
+            try
+            {
+                await ViewModel.GetBestCurrentRateFor(currency);
+                Print($"Best current rate from USD to {currency}: " + ViewModel.BestCurrencyValue);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         #region Helper Method
@@ -61,10 +69,6 @@ namespace TestApp.Views
             if (mykey[1] == readKey)
             {
                 MessageBox.Show(printData);
-            }
-            else
-            {
-                Console.WriteLine("Unknown printing option");
             }
         }
 
