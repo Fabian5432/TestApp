@@ -73,7 +73,7 @@ namespace TestApp.ViewModels
             }
             catch (Exception ex)
             {
-                throw new Exception("Error loading quotes from curreny layer api", ex);
+                throw new Exception("Error loading quotes from currency layer api", ex);
             }
         }
 
