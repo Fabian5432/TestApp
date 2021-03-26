@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using TestApp.Services;
 
-namespace IntegrationTests
+namespace TestApp.IntegrationTests
 {   
     [TestFixture]
     class CurrencyLayerServiceIntegrationTests
@@ -29,8 +29,11 @@ namespace IntegrationTests
             // Arrange
             var SUT = new OpenExchangeRatesService("dummy");
 
+            // Act
+            Func<Task> act = async () => { await SUT.GetAllRates(); };
+
             // Assert
-            Assert.ThrowsAsync<Exception>(async () => await SUT.GetAllRates());
+            act.Should().Throw<Exception>();
         }
     }
 }

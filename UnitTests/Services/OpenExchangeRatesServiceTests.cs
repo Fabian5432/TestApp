@@ -4,7 +4,7 @@ using AutoFixture.Idioms;
 using NUnit.Framework;
 using TestApp.Services;
 
-namespace Tests.Services
+namespace TestApp.UnitTests.Services
 {
     [TestFixture]
     [TestOf(nameof(OpenExchangeRatesService))]

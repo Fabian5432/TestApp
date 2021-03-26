@@ -4,7 +4,7 @@ using AutoFixture.Idioms;
 using NUnit.Framework;
 using TestApp.Models;
 
-namespace Tests.Models
+namespace TestApp.UnitTests.Models
 {
 	[TestFixture]
 	[TestOf(nameof(QuotesModel))]

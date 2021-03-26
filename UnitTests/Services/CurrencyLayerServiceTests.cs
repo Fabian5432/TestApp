@@ -2,10 +2,9 @@
 using AutoFixture.AutoMoq;
 using AutoFixture.Idioms;
 using NUnit.Framework;
-using System.Threading.Tasks;
 using TestApp.Services;
 
-namespace Tests.Services
+namespace TestApp.UnitTests.Services
 {   
     [TestFixture]
     [TestOf(nameof(CurrencyLayerService))]

@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using TestApp.Services;
 
-namespace IntegrationTests
+namespace TestApp.IntegrationTests
 {   
     [TestFixture]
     public class OpenExchangeRatesServiceIntergrationTests

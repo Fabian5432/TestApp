@@ -12,7 +12,7 @@ using TestApp.Models;
 using TestApp.Services.Interfaces;
 using TestApp.ViewModels;
 
-namespace Tests.ViewModels
+namespace TestApp.UnitTests.ViewModels
 {  
     [TestFixture]
     [TestOf(nameof(RatesViewModel))]
@@ -137,12 +137,13 @@ namespace Tests.ViewModels
             // Arrange
             var SUT = _fixture.Create<RatesViewModel>();
 
-            // Assert  / Act 
-            var assert1 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetAllQuotes());
-            assert1.Message.Should().Be("Error loading quotes from curreny layer api");
+            // Act 
+            Func<Task> act1 = async () => { await SUT.GetAllQuotes(); };
+            Func<Task> act2 = async () => { await SUT.GetAllRates(); };
 
-            var assert2 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetAllRates());
-            assert2.Message.Should().Be("Error loading rates from Open exchange api");
+            // Assert 
+            act1.Should().Throw<Exception>().WithMessage("Error loading quotes from currency layer api");
+            act2.Should().Throw<Exception>().WithMessage("Error loading rates from Open exchange api");
         }
 
         [Test]
@@ -164,11 +165,13 @@ namespace Tests.ViewModels
 
             var SUT = _fixture.Create<RatesViewModel>();
 
-            // Act / Assert
-            var assert1 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetCurrentRateFor(null));
-            assert1.Message.Should().Be("Currency name must be specified");
-            var assert2 = Assert.ThrowsAsync<Exception>(async () => await SUT.GetBestCurrentRateFor(null));
-            assert2.Message.Should().Be("Currency name must be specified");
+            // Act 
+            Func<Task> act1 = async () => { await SUT.GetCurrentRateFor(null); };
+            Func<Task> act2 = async () => { await SUT.GetBestCurrentRateFor(null); };
+
+            // Assert
+            act1.Should().Throw<Exception>().WithMessage("Currency name must be specified");
+            act2.Should().Throw<Exception>().WithMessage("Currency name must be specified");
         }
 
         #endregion
