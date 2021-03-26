@@ -26,7 +26,7 @@ namespace TestApp.AcceptanceTests.Steps
         }
         
         [When(@"the user requests all quates")]
-        public async Task WhenTheUserTypeList()
+        public async Task WhenTheUserRequestData()
         {
             var quates = await _currencyLayerService.GetAllQuotes();
 
@@ -34,7 +34,7 @@ namespace TestApp.AcceptanceTests.Steps
         }
         
         [Then(@"a non empty list with quates is displayed")]
-        public void ThenANonEmptyListIsDisplayed()
+        public void ThenANonEmptyListIsWithQuatesIsDisplayed()
         {
             var expectedQuatesList = _quatesContext.Quotes;
             expectedQuatesList.Should().NotBeEmpty();
