@@ -4,11 +4,10 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>TestApp.AcceptanceTests</RootNamespace>
     <AssemblyName>TestApp.AcceptanceTests</AssemblyName>
-    <OutDir>..\build</OutDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\Projects\TestApp\TestApp\build\</OutputPath>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
