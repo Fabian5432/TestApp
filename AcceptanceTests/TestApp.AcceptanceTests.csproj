@@ -4,6 +4,7 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>TestApp.AcceptanceTests</RootNamespace>
     <AssemblyName>TestApp.AcceptanceTests</AssemblyName>
+    <OutDir>..\build</OutDir>
   </PropertyGroup>
 
   <ItemGroup>

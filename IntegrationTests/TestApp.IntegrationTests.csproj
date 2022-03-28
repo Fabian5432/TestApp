@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
+	  <OutDir>..\build</OutDir>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
