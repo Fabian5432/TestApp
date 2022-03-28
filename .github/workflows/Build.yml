@@ -24,4 +24,4 @@ jobs:
     - name: Build solution
       run:  msbuild.exe .\TestApp.sln /t:restore
     - name: Run Unit Tests
-      run: dotnet test ~TestApp/UnitTests/TestApp.UnitTests.csproj
+      run: dotnet test ..\TestApp/UnitTests/TestApp.UnitTests.csproj
