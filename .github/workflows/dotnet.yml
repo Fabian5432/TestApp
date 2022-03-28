@@ -26,4 +26,4 @@ jobs:
     - name: Build solution
       run:  msbuild.exe .\TestApp.sln /t:restore
     - name: Run Unit Tests
-      run: vstest.console.exe /Platform:x64 ..\TestApp.UnitTests.dll 
+      run: vstest.console.exe /Platform:x64 \build\TestApp.UnitTests.dll 
