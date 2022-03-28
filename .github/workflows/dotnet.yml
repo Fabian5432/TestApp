@@ -24,6 +24,8 @@ jobs:
     - name: Use NuGet 5.2.0
       uses: nuget/setup-nuget@v1
     - name: Build solution
+      working-directory: $
       run:  msbuild.exe .\TestApp.sln /t:restore
     - name: Run Unit Tests
-      run: vstest.console.exe .\TestApp.UnitTests.dll 
+      working-directory: $
+      run: vstest.console.exe TestApp\TestApp\build\TestApp.UnitTests.dll
