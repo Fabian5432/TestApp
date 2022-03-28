@@ -7,6 +7,10 @@
     <OutDir>..\build</OutDir>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Projects\TestApp\TestApp\build\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Hooks\**" />
     <Compile Remove="NewFolder\**" />
