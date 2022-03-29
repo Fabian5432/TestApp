@@ -26,4 +26,4 @@ jobs:
     - name: Build solution
       run:  msbuild.exe .\TestApp.sln -t:restore
     - name: Run UnitTests
-      run: vstest.console.exe /Platform:x64 .\UnitTests\bin\Debug\netcoreapp3.1\TestApp.UnitTests.dll
+      run: vstest.console.exe /Platform:x64 \UnitTests\bin\Debug\netcoreapp3.1\TestApp.UnitTests.dll
