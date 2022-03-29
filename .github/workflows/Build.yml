@@ -21,7 +21,9 @@ jobs:
       uses: microsoft/setup-msbuild@v1
     - name: Setup NuGet
       uses: nuget/setup-nuget@v1
+    - name: Nuget restore
+      run: nuget restore  .\TestApp.sln 
     - name: Build solution
-      run:  msbuild.exe .\TestApp.sln -t:restore
+      run:  msbuild.exe .\TestApp.sln 
     - name: Run UnitTests
       run: dotnet test --no-restore --verbosity normal
