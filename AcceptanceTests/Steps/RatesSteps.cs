@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using System;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using TestApp.AcceptanceTests.Context;
@@ -19,12 +18,6 @@ namespace TestApp.AcceptanceTests.Steps
             _openExchangeRatesService = openExchangeRatesService;
         }
 
-        [Given(@"a user is using the OpenExchangeRates api")]
-        public void GivenAUserIsUsingTheOpenExchangeRatesApi()
-        {
-           // empty step 
-        }
-        
         [When(@"the user requests all rates")]
         public async Task WhenTheUserRequestData()
         {

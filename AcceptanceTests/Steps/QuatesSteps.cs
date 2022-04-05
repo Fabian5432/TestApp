@@ -16,20 +16,12 @@ namespace TestApp.AcceptanceTests.Steps
         {
             _quatesContext = quatesContext;
             _currencyLayerService = currencyLayerService;
-
         }
 
-        [Given(@"a user is using the CurrencyLayer api")]
-        public void GivenAUserIsUsingThe()
-        {
-            // empty step
-        }
-        
         [When(@"the user requests all quates")]
         public async Task WhenTheUserRequestData()
         {
             var quates = await _currencyLayerService.GetAllQuotes();
-
             _quatesContext.Quotes = quates;
         }
         

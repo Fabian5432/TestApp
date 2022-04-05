@@ -16,6 +16,7 @@ namespace TestApp.AcceptanceTests.Binding
         #endregion
 
         #region Constructor
+
         public ContainerSetupBinding(IObjectContainer objectContainer)
         {
             _objectContainer = objectContainer ?? 
@@ -26,15 +27,20 @@ namespace TestApp.AcceptanceTests.Binding
 
         #region SetupBeforeScenarios
 
-        [BeforeScenario]
-        public void BeforeScenariosSetupBindings()
+        [Given(@"a user is using the (.*) api")]
+        public void GivenAUserIsUsingThe(string api)
         {
-            IOpenExchangeRatesService openExchangeRatesService = new OpenExchangeRatesService("1de86dfd996b4c9da20c0b3fa6eefaa4");
-            _objectContainer.RegisterInstanceAs(openExchangeRatesService);
-
-            ICurrencyLayerService currencyLayerService = new CurrencyLayerService("980b4fe950b3d8d23a5a6eef697865af");
-            _objectContainer.RegisterInstanceAs(currencyLayerService);
-
+            switch(api)
+            {
+                case "OpenExchangeRates":
+                    IOpenExchangeRatesService openExchangeRatesService = new OpenExchangeRatesService("1de86dfd996b4c9da20c0b3fa6eefaa4");
+                    _objectContainer.RegisterInstanceAs(openExchangeRatesService);
+                    break;
+                case "CurrencyLayer":
+                    ICurrencyLayerService currencyLayerService = new CurrencyLayerService("980b4fe950b3d8d23a5a6eef697865af");
+                    _objectContainer.RegisterInstanceAs(currencyLayerService);
+                    break;
+            }
         }
 
         #endregion
